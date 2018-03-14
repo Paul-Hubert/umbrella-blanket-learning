@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script type="text/javascript">
+
+fr = new FileReader();
+
+readTextFile = function() {
+	
+	info = fr.result.split(",");
+	
+	c = document.getElementById("myCanvas");
+	ctx = c.getContext("2d");
+	
+	for(var i = 0; i<28; i++) {
+	   
+	   for(var j = 0; j<28; j++) {
+	      
+         var expp = Math.exp(info[i*28+j]), expm = Math.exp(-info[i*28+j]);
+         var tanh = (expp - expm)/(expp + expm);
+         var col = ((info[i*28+j]*256)&0xff).toString(16);
+         
+         ctx.fillStyle = "#"+col+col+col;
+         ctx.fillRect(j*10,i*10,10,10);
+	   }
+	}
+	
+	document.getElementById("label").innerHTML = info[info.length-1];
+	
+	setTimeout(function() {
+	   fr.readAsText(document.getElementById('input').files[0]);
+	},50);
+	
+}
+
+fr.onload = readTextFile;
+
+</script>
+
+<canvas id="myCanvas" width="280" height="280" style="border: 1px black solid"></canvas>
+<input type="file" id="input" onchange="fr.readAsText(this.files[0]);">
+<div id='label'></div>
+
+</body>
+</html>
