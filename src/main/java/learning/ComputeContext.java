@@ -18,10 +18,7 @@ public class ComputeContext {
    public static cl_context context;
    public static cl_command_queue queue;
    
-   private static cl_kernel kernel_copy;
-   private static cl_kernel kernel_add;
-   private static cl_kernel kernel_zeros;
-   private static cl_kernel kernel_ones;
+   private static cl_kernel kernel_copy, kernel_add, kernel_radd, kernel_zeros, kernel_ones;
    
    private final static ArrayList kernels = new ArrayList();
    private final static ArrayList programs = new ArrayList();
@@ -72,6 +69,7 @@ public class ComputeContext {
       
       kernel_copy = getKernel("./kernel/copy.c", "copy");
       kernel_add = getKernel("./kernel/add.c", "add");
+      kernel_radd = getKernel("./kernel/pointadd.c", "pointadd");
       kernel_zeros = getKernel("./kernel/zeros.c", "zeros");
       kernel_ones = getKernel("./kernel/ones.c", "ones");
       
@@ -108,6 +106,15 @@ public class ComputeContext {
       clSetKernelArg(kernel_add, 1, Sizeof.cl_mem, Pointer.to(y.getMem()));
       
       clEnqueueNDRangeKernel(queue, kernel_add, 1, null, y.global_size, y.local_size, 0, null, null);
+   }
+   
+   public static void add(Tensor x1, Tensor x2, Tensor y) {
+      //y = x1 + x2;
+      clSetKernelArg(kernel_radd, 0, Sizeof.cl_mem, Pointer.to(x1.getMem()));
+      clSetKernelArg(kernel_radd, 1, Sizeof.cl_mem, Pointer.to(x2.getMem()));
+      clSetKernelArg(kernel_radd, 2, Sizeof.cl_mem, Pointer.to(y.getMem()));
+      
+      clEnqueueNDRangeKernel(queue, kernel_radd, 1, null, y.global_size, y.local_size, 0, null, null);
    }
    
    public static void zeros(Tensor y) {

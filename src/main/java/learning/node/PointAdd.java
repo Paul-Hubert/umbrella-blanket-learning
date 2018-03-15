@@ -16,11 +16,7 @@ public class PointAdd extends I2Node {
    void forwardProp() {
       
       if(OPEN_CL) {
-         CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(in.getMem()));
-         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(in2.getMem()));
-         CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(output.getMem()));
-         
-         CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, output.global_size, output.local_size, 0, null, null);
+         add(in, in2, output);
       } else {
          for(int v = 0; v<in.vectorNum(); v++) {
             float[] vecI1 = in.getVector(v), vecI2 = in2.getVector(v), vecO = output.getVector(v);
@@ -40,13 +36,6 @@ public class PointAdd extends I2Node {
       output = Tensor.create(outputSize);
       input = Tensor.create(outputSize);
       input2 = Tensor.create(outputSize);
-      
-      if(OPEN_CL) {
-         if(!ready) {
-            kernel = getKernel("./kernel/pointadd.c", "pointadd");
-            ready = true;
-         }
-      }
    }
    
 }

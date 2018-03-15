@@ -5,8 +5,11 @@ import learning.operation.Operation;
 
 public class RecurrentGate extends Input {
    
+   private int time = 0;
+   
    public RecurrentGate (int[] size) {
       super(size);
+      outputSize = size;
    }
    
    @Override

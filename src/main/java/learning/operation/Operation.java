@@ -5,7 +5,7 @@ import learning.tensor.Tensor;
 
 public class Operation {
    
-   public Node current;
+   private Node current;
    public boolean calculate = true;
    
    public void prepare() {
@@ -14,6 +14,10 @@ public class Operation {
    
    public void operate(Node n, Tensor t) {
       current = n;
+   }
+   
+   public Node getLast() {
+      return current;
    }
    
    

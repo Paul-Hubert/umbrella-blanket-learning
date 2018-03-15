@@ -15,9 +15,12 @@ public class Node {
    
    protected int[] outputSize;
    
-   protected int time = 0;
    protected boolean ready = false;
    protected String name;
+   
+   public Node() {
+      setNetwork();
+   }
    
    void forwardProp() {
       output = in;
@@ -91,7 +94,6 @@ public class Node {
    public Node chain(Node n) {
       this.attachNext(n);
       n.attachBefore(this);
-      setNetwork();
       return n;
    }
    

@@ -11,6 +11,7 @@ import static learning.ComputeContext.*;
 public class Shape extends Node {
    
    public Shape (int[] size) {
+      super();
       outputSize = size;
    }
    

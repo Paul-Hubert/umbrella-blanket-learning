@@ -27,6 +27,7 @@ public class Linear extends Node {
    private int[] ncol,mrow;
    
    public Linear(int[] size) {
+      super();
       outputSize = size;
    }
    

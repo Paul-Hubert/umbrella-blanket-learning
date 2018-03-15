@@ -53,7 +53,6 @@ public class MNIST {
       //0.001, 0.9, 0.999, 0.00000001
       
       AdamOptimizer gd = new AdamOptimizer(0.001f, 0.9f, 0.999f, 0.00001f);
-      AdamOptimizer gd2 = new AdamOptimizer(0.01f, 0.9f, 0.999f, 0.00001f);
       //GradientDescent gd = new GradientDescent(0.0001f);
       long dt, load = 0L, unload = 0L, forward = 0L, backward = 0L, opt = 0L;
       double win = 0.0;

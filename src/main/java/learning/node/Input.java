@@ -6,6 +6,7 @@ import learning.operation.Operation;
 public class Input extends Node {
    
    public Input (int[] size) {
+      super();
       outputSize = size;
    }
    

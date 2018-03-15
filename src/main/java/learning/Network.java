@@ -12,6 +12,8 @@ public class Network {
    private static Network current;
    
    private ArrayList<Input> inputs = new ArrayList<>();
+   private ArrayList<Output> outputs = new ArrayList<>();
+   private ArrayList<RecurrentGate> recurrent = new ArrayList<>();
    
    private final Operation forward, backward;
    private final OptimizeOperation optimize;
@@ -34,11 +36,13 @@ public class Network {
    }
    
    public void add(Node n) {
-      if(n instanceof Input && !inputs.contains((Input) n)) {
-         inputs.add((Input) n);
-      }
       if(n instanceof RecurrentGate) {
+         recurrent.add((RecurrentGate) n);
          RECURRENT = true;
+      } else if(n instanceof Input) {
+         inputs.add((Input) n);
+      } else if(n instanceof Output) {
+         outputs.add((Output) n);
       }
    }
    

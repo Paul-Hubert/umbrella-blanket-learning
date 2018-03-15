@@ -22,6 +22,7 @@ public class SoftmaxLoss extends I2Node {
    private static double e = 0.00001;
    
    public SoftmaxLoss(Node n) {
+      super();
       before2 = n;
    }
    
