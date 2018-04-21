@@ -15,11 +15,7 @@ public class Copy extends O2Node {
    
    private cl_kernel kernel;
    
-   void forwardProp() {
-      output = in;
-   }
-   
-   void backwardProp() {
+   public void backwardProp() {
       
       if(OPEN_CL) {
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
@@ -32,21 +28,12 @@ public class Copy extends O2Node {
       }
    }
    
-   Tensor forwards(Operation op) {
-      
-      return output;
-   }
-   
-   void backwards(Tensor t, Operation op) {
-      
-   }
-   
    protected void prepare() {
       input = Tensor.create(outputSize);
       
       if(OPEN_CL) {
          if(!ready) {
-            kernel = getKernel("./kernel/pointmul.c", "pointmul");
+            kernel = getKernel("./kernel/pointadd.c", "pointadd");
             ready = true;
          }
       }

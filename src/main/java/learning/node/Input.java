@@ -11,27 +11,25 @@ public class Input extends Node {
    }
    
    @Override
-   void forwardProp() {
+   public void forwardProp() {
       
    }
    
    @Override
-   void backwardProp() {
+   public void backwardProp() {
       input = dO;
    }
    
    @Override
-   Tensor forwards(Operation op) {
-      if(op.calculate) forwardProp();
-      op.operate(this,output);
+   Tensor forwards() {
+      net.operate(this);
       return output;
    }
    
    @Override
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
-      if(op.calculate) backwardProp();
-      op.operate(this,input);
+      net.operate(this);
    }
    
    @Override

@@ -13,30 +13,28 @@ public class RecurrentGate extends Input {
    }
    
    @Override
-   void forwardProp() {
+   public void forwardProp() {
       time++;
    }
    
    @Override
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       input = dO;
    }
    
    @Override
-   Tensor forwards(Operation op) {
-      if(op.calculate) forwardProp();
-      op.operate(this,output);
+   Tensor forwards() {
+      net.operate(this);
       return output;
    }
    
    @Override
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
       if(time > 0) {
-         if(op.calculate) backwardProp();
-         op.operate(this,input);
-         before.backwards(input, op);
+         net.operate(this);
+         before.backwards(input);
       }
    }
    

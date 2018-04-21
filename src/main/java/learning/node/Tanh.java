@@ -16,7 +16,7 @@ public class Tanh extends Node {
    private static cl_kernel kernel, kernel2;
    
    @Override
-   void forwardProp() {
+   public void forwardProp() {
       if(time == outputs.size()) {
          outputs.add(Tensor.create(before.getOutputSize()));
       }
@@ -42,7 +42,7 @@ public class Tanh extends Node {
    }
    
    @Override
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       
       if(OPEN_CL) {

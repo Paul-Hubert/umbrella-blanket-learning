@@ -13,7 +13,7 @@ public class Concatenate extends I2Node {
    
    private int[] offset;
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(OPEN_CL) {
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(in.getMem()));
@@ -32,7 +32,7 @@ public class Concatenate extends I2Node {
       }
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       
       if(OPEN_CL) {
          

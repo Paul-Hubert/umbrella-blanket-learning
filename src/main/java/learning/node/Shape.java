@@ -15,7 +15,7 @@ public class Shape extends Node {
       outputSize = size;
    }
    
-   void forwardProp() {
+   public void forwardProp() {
       if(OPEN_CL) {
          output = new Tensor(in, outputSize);
       } else {
@@ -23,7 +23,7 @@ public class Shape extends Node {
       }
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       if(OPEN_CL) {
          input = new Tensor(dO, before.getOutputSize());
       } else {

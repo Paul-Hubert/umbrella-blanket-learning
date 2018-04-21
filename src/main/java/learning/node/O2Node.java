@@ -11,35 +11,34 @@ public class O2Node extends Node {
    
    protected boolean calculated = false;
    
-   void forwardProp() {
+   public void forwardProp() {
       output = in;
       output2 = in;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       input = dO;
    }
    
-   Tensor forwards(Operation op) {
+   Tensor forwards() {
       if(!calculated) {
-         in = before.forwards(op);
-         if(op.calculate) forwardProp();
+         in = before.forwards();
          calculated = true;
       }
-      if(op.getLast() == next) {
-         op.operate(this,output);
+      if(net.getLast() == next) {
+         net.operate(this);
          return output;
-      } if(op.getLast() == next2) {
-         op.operate(this,output2);
+      } if(net.getLast() == next2) {
+         net.operate(this);
          return output2;
       }
+      return null;
    }
    
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
-      if(op.calculate) backwardProp();
-      op.operate(this,input);
-      before.backwards(input, op);
+      net.operate(this);
+      before.backwards(input);
    }
    
    protected void attachNext(Node n) {

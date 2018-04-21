@@ -12,25 +12,26 @@ public class Main {
    
    public static void main(String[] args) {
       
-      boolean CL = true;
-      
-       for (String arg : args) {
-        if (arg.equals("-noCL")) {
-            CL = false;
-        } else if (arg.equals("test")) {
-            LinearTest.test(CL);
+      for (String arg : args) {
+         if (arg.equals("-noCL")) {
+            OPEN_CL = false;
+         } else if (arg.equals("LinearTest")) {
+            LinearTest.test();
             return;
-        } else if (arg.equals("MNIST")) {
-            MNIST.test(CL);
+         } else if (arg.equals("MNIST")) {
+            MNIST.test();
             return;
-        } else if (arg.equals("devices")) {
+         } else if (arg.equals("ShakeLSTM") {
+            ShakeLSTM.test();
+            return;
+         } else if (arg.equals("devices")) {
             JOCLDeviceQuery.test();
             return;
-        }
-       }
+         }
+      }
       
-      if(ComputeContext.init()) {
-         ComputeContext.OPEN_CL = CL;
+      if(OPEN_CL) {
+         ComputeContext.init();
       }
       
       Mastermind game = new Mastermind();

@@ -16,32 +16,31 @@ public class Node {
    protected int[] outputSize;
    
    protected boolean ready = false;
+   protected int time = 0;
    protected String name;
    
    public Node() {
       setNetwork();
    }
    
-   void forwardProp() {
+   public void forwardProp() {
       output = in;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       input = dO;
    }
    
-   Tensor forwards(Operation op) {
-      in = before.forwards(op);
-      if(op.calculate) forwardProp();
-      op.operate(this,output);
+   Tensor forwards() {
+      in = before.forwards();
+      net.operate(this);
       return output;
    }
    
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
-      if(op.calculate) backwardProp();
-      op.operate(this,input);
-      before.backwards(input, op);
+      net.operate(this);
+      before.backwards(input);
    }
    
    protected void attachNext(Node n) {
@@ -70,34 +69,34 @@ public class Node {
      //overriden for Tensor creation and kernel compiling
    }
    
-   public Tensor forwardOp(Operation opt) {
-      return this.forwards(opt);
+   public final Tensor forwardOp() {
+      return this.forwards();
    }
    
-   public void backwardOp(Tensor t, Operation opt) {
-      this.backwards(t,opt);
+   public final void backwardOp(Tensor t) {
+      this.backwards(t);
    }
    
-   public Tensor getOutput() {
+   public final Tensor getOutput() {
       return output;
    }
    
-   public Tensor getGradient() {
+   public final Tensor getGradient() {
       return input;
    }
    
-   public void setNetwork() {
+   public final void setNetwork() {
       net = Network.getCurrent();
       net.add(this);
    }
    
-   public Node chain(Node n) {
+   public final Node chain(Node n) {
       this.attachNext(n);
       n.attachBefore(this);
       return n;
    }
    
-   public Node name(String s) {
+   public final Node name(String s) {
       name = s;
       return this;
    }

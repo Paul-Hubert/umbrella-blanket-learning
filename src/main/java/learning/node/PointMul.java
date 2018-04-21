@@ -18,7 +18,7 @@ public class PointMul extends I2Node {
    //for derivative calculations
    private ArrayList<Tensor> inputs1 = new ArrayList<Tensor>(), inputs2 = new ArrayList<Tensor>();
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(time == inputs1.size()) {
          inputs1.add(Tensor.create(input.getSize()));
@@ -51,7 +51,7 @@ public class PointMul extends I2Node {
       time++;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       
       if(OPEN_CL) {

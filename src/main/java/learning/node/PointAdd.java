@@ -13,7 +13,7 @@ public class PointAdd extends I2Node {
    
    private cl_kernel kernel;
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(OPEN_CL) {
          add(in, in2, output);
@@ -27,7 +27,7 @@ public class PointAdd extends I2Node {
       }
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       input = dO;
       input2 = dO;
    }

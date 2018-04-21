@@ -25,7 +25,7 @@ public class ComputeContext {
    
    public static long pref_local_size = 0L;
    
-   public static boolean OPEN_CL = false, PROFILING = false, RECURRENT = false;
+   public static boolean OPEN_CL = true, PROFILING = false, RECURRENT = false;
    
    public static boolean init() {
       // The platform, device type and device number
@@ -83,6 +83,7 @@ public class ComputeContext {
    }
    
    public static void release() {
+      Tensor.release();
       for(int i = 0; i<kernels.size(); i++) {
          clReleaseKernel((cl_kernel) kernels.get(i));
          clReleaseProgram((cl_program) programs.get(i));

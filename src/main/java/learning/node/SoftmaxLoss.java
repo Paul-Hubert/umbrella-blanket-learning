@@ -26,7 +26,7 @@ public class SoftmaxLoss extends I2Node {
       before2 = n;
    }
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(time == softmax.size()) {
          softmax.add(Tensor.create(in.getSize()));
@@ -130,7 +130,7 @@ public class SoftmaxLoss extends I2Node {
       time++;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       
       Tensor labelB = labels.get(time), soft = softmax.get(time);
@@ -169,11 +169,10 @@ public class SoftmaxLoss extends I2Node {
       
    }
    
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
-      if(op.calculate) backwardProp();
-      op.operate(this,input);
-      before.backwards(input, op);
+      net.operate(this);
+      before.backwards(input);
    }
    
    protected void attachBefore(Node b) {

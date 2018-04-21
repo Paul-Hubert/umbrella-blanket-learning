@@ -8,15 +8,11 @@ public class OptimizeOperation extends Operation {
    
    private Optimizer opt;
    
-   public OptimizeOperation() {
-      calculate = false;
-   }
-   
    public void prepare() {
-      
+      opt.prepare();
    }
    
-   public void operate(Node n, Tensor t) {
+   protected void operation(Node n) {
       n.optimize(opt);
    }
    

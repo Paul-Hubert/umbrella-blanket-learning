@@ -31,7 +31,7 @@ public class Linear extends Node {
       outputSize = size;
    }
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(time == inputs.size()) {
          inputs.add(Tensor.create(input.getSize()));
@@ -71,7 +71,7 @@ public class Linear extends Node {
       time++;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       Tensor inputB = inputs.get(time);
       

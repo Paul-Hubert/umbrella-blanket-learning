@@ -28,12 +28,12 @@ public class MNIST {
    private static float[][] imagesD;
    private static float[] labelsD;
    
-   public static void test(boolean CL) {
+   public static void test() {
       loadMNIST();
       
       ComputeContext.PROFILING = true;
-      if(ComputeContext.init()) {
-         ComputeContext.OPEN_CL = CL;
+      if(ComputeContext.OPEN_CL) {
+         ComputeContext.init();
       }
       
       Network net = new Network();
@@ -131,8 +131,8 @@ public class MNIST {
                         saveTensor(in, labelsD[t]);
                      }
                      net.gradientsFrom(output);
-                     gd2.prepare();
-                     gd2.optimize(in, input.getGradient());
+                     gd.prepare();
+                     gd.optimize(in, input.getGradient());
                      
                      
                   }

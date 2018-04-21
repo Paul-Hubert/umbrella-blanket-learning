@@ -11,18 +11,23 @@ public class Network {
    
    private static Network current;
    
+   private boolean RECURRENT = false;
+   
    private ArrayList<Input> inputs = new ArrayList<>();
    private ArrayList<Output> outputs = new ArrayList<>();
    private ArrayList<RecurrentGate> recurrent = new ArrayList<>();
    
-   private final Operation forward, backward;
+   private final ForwardOperation forward;
+   private final BackwardOperation backward;
    private final OptimizeOperation optimize;
    
-   public boolean RECURRENT = false;
+   private Operation op;
+   
+   private int passCount = 0;
    
    public Network() {
-      forward = new Operation();
-      backward = new Operation();
+      forward = new ForwardOperation();
+      backward = new BackwardOperation();
       optimize = new OptimizeOperation();
       current = this;
    }
@@ -46,19 +51,44 @@ public class Network {
       }
    }
    
+   public void operate(Node n) {
+      op.operate(n);
+   }
+   
+   public Node getLast() {
+      return op.getLast();
+   }
+   
    public Tensor calculate(Node n) {
-      return n.forwardOp(forward);
+      op = forward;
+      forward.prepare();
+      return n.forwardOp();
+   }
+   
+   public Tensor forwardPass(Node n, Operation operation) {
+      op = operation;
+      op.prepare();
+      return n.forwardOp();
    }
    
    public void gradientsFrom(Node n) {
+      op = backward;
+      backward.prepare();
       Tensor t = Tensor.create(n.getOutputSize()).loadOnes();
-      n.backwardOp(t, backward);
+      n.backwardOp(t);
    }
    
    public void optimize(Node n, Optimizer opt) {
-      opt.prepare();
+      op = optimize;
       optimize.setOptimizer(opt);
-      n.backwardOp(null, optimize);
+      optimize.prepare();
+      n.backwardOp(null);
+   }
+   
+   public void backwardPass(Node n, Tensor t, Operation operation) {
+      op = operation;
+      op.prepare();
+      n.backwardOp(t);
    }
    
 }

@@ -9,30 +9,28 @@ public class I2Node extends Node {
    
    protected Tensor input2, in2;
    
-   void forwardProp() {
+   public void forwardProp() {
       output = in;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       input = dO;
       input2 = dO;
    }
    
-   Tensor forwards(Operation op) {
-      in = before.forwards(op);
-      in2 = before2.forwards(op);
-      if(op.calculate) forwardProp();
-      op.operate(this,output);
+   Tensor forwards() {
+      in = before.forwards();
+      in2 = before2.forwards();
+      net.operate(this);
       return output;
    }
    
-   void backwards(Tensor t, Operation op) {
+   void backwards(Tensor t) {
       dO = t;
-      if(op.calculate) backwardProp();
-      op.operate(this,input);
-      op.operate(this,input2);
-      before.backwards(input, op);
-      before2.backwards(input2, op);
+      net.operate(this);
+      net.operate(this);
+      before.backwards(input);
+      before2.backwards(input2);
    }
    
    protected void attachBefore(Node n) {

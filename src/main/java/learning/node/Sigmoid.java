@@ -18,7 +18,7 @@ public class Sigmoid extends Node {
    
    private static cl_kernel kernel, kernel2;
    
-   void forwardProp() {
+   public void forwardProp() {
       
       if(time == outputs.size()) {
          outputs.add(Tensor.create(before.getOutputSize()));
@@ -44,7 +44,7 @@ public class Sigmoid extends Node {
       time++;
    }
    
-   void backwardProp() {
+   public void backwardProp() {
       time--;
       
       if(OPEN_CL) {
