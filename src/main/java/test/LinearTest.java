@@ -10,9 +10,11 @@ import static learning.ComputeContext.*;
 
 public class LinearTest {
    
-   public static void test(boolean CL) {
-      if(ComputeContext.init()) {
-         ComputeContext.OPEN_CL = CL;
+   public static void test() {
+      
+      ComputeContext.PROFILING = true;
+      if(ComputeContext.OPEN_CL) {
+         ComputeContext.init();
       }
       
       int[] iSize = {128*10}, hiddenSize = {128*10}, oSize = {128*10}, lSize = {128};

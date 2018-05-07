@@ -33,12 +33,12 @@ public class Linear extends Node {
    
    public void forwardProp() {
       
-      if(time == inputs.size()) {
+      if(net.getTime() == inputs.size()) {
          inputs.add(Tensor.create(input.getSize()));
       }
       
       if(OPEN_CL) {
-         copy(in, inputs.get(time));
+         copy(in, inputs.get(net.getTime()));
          
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(weights.getMem()));
          CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(in.getMem()));
@@ -55,7 +55,7 @@ public class Linear extends Node {
          float[] vecB = bias.getVector(0);
          float[][] matW = weights.getMatrix(0);
          for(int v = 0; v < output.vectorNum(); v++) {
-            float[] vecI = in.getVector(v), vecO = output.getVector(v), vecT = ((Tensor) inputs.get(time)).getVector(v);
+            float[] vecI = in.getVector(v), vecO = output.getVector(v), vecT = inputs.get(net.getTime()).getVector(v);
             System.arraycopy(vecI, 0, vecT, 0, vecT.length);
             for(int i = 0; i<mrow[0]; i++) {
                for(int j = 0; j<ncol[0]; j++) {
@@ -65,15 +65,10 @@ public class Linear extends Node {
             }
          }
       }
-      
-      // output = input * weights + bias
-      
-      time++;
    }
    
    public void backwardProp() {
-      time--;
-      Tensor inputB = inputs.get(time);
+      Tensor inputB = inputs.get(net.getTime());
       
       if(OPEN_CL) {
          

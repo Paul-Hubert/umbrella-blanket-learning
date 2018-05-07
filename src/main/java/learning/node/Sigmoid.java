@@ -20,19 +20,19 @@ public class Sigmoid extends Node {
    
    public void forwardProp() {
       
-      if(time == outputs.size()) {
+      if(net.getTime() == outputs.size()) {
          outputs.add(Tensor.create(before.getOutputSize()));
       }
       
       if(OPEN_CL) {
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(in.getMem()));
          CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(output.getMem()));
-         CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(outputs.get(time).getMem()));
+         CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(outputs.get(net.getTime()).getMem()));
          
          CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, output.global_size, output.local_size, 0, null, null);
       } else {
          for(int v = 0; v<in.vectorNum(); v++) {
-            float[] vecO = output.getVector(v), vecI = in.getVector(v), vecT = outputs.get(time).getVector(v);
+            float[] vecO = output.getVector(v), vecI = in.getVector(v), vecT = outputs.get(net.getTime()).getVector(v);
             for(int i = 0; i<vecI.length; i++) {
                vecO[i] = (float) (1.0 / (1.0 + Math.exp(-vecI[i])));
                vecT[i] = vecO[i];
@@ -40,24 +40,21 @@ public class Sigmoid extends Node {
          }
       }
       
-      
-      time++;
    }
    
    public void backwardProp() {
-      time--;
       
       if(OPEN_CL) {
          
          CL.clSetKernelArg(kernel2, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
-         CL.clSetKernelArg(kernel2, 1, Sizeof.cl_mem, Pointer.to(outputs.get(time).getMem()));
+         CL.clSetKernelArg(kernel2, 1, Sizeof.cl_mem, Pointer.to(outputs.get(net.getTime()).getMem()));
          CL.clSetKernelArg(kernel2, 2, Sizeof.cl_mem, Pointer.to(input.getMem()));
          
          CL.clEnqueueNDRangeKernel(queue, kernel2, 1, null, input.global_size, input.local_size, 0, null, null);
          
       } else {
          for(int v = 0; v<dO.vectorNum(); v++) {
-            float[] vecdI = input.getVector(v), vecdO = dO.getVector(v), vecT = outputs.get(time).getVector(v);
+            float[] vecdI = input.getVector(v), vecdO = dO.getVector(v), vecT = outputs.get(net.getTime()).getVector(v);
             for(int i = 0; i<vecdO.length; i++) {
                vecdI[i] = vecT[i] * (1f - vecT[i]) * vecdO[i];
             }

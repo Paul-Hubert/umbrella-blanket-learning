@@ -12,10 +12,12 @@ public class Network {
    private static Network current;
    
    private boolean RECURRENT = false;
+   private int time = 0, opID = 0;
    
    private ArrayList<Input> inputs = new ArrayList<>();
    private ArrayList<Output> outputs = new ArrayList<>();
    private ArrayList<RecurrentGate> recurrent = new ArrayList<>();
+   private ArrayList<Node> nodes = new ArrayList<>();
    
    private final ForwardOperation forward;
    private final BackwardOperation backward;
@@ -49,6 +51,7 @@ public class Network {
       } else if(n instanceof Output) {
          outputs.add((Output) n);
       }
+      nodes.add(n);
    }
    
    public void operate(Node n) {
@@ -59,36 +62,55 @@ public class Network {
       return op.getLast();
    }
    
+   public int getTime() {
+      return time - 1;
+   }
+   
+   public int getOpID() {
+      return opID - 1;
+   }
+   
    public Tensor calculate(Node n) {
-      op = forward;
-      forward.prepare();
-      return n.forwardOp();
+      return forwardPass(n, forward);
    }
    
    public Tensor forwardPass(Node n, Operation operation) {
       op = operation;
+      opID++;
       op.prepare();
+      time++;
       return n.forwardOp();
    }
    
    public void gradientsFrom(Node n) {
-      op = backward;
-      backward.prepare();
       Tensor t = Tensor.create(n.getOutputSize()).loadOnes();
-      n.backwardOp(t);
+      backwardPass(n, t, backward);
+      time--;
    }
    
    public void optimize(Node n, Optimizer opt) {
-      op = optimize;
       optimize.setOptimizer(opt);
-      optimize.prepare();
-      n.backwardOp(null);
+      backwardPass(n, null, optimize);
+      time = 0;
    }
    
    public void backwardPass(Node n, Tensor t, Operation operation) {
       op = operation;
+      opID++;
       op.prepare();
+      if(!(n instanceof Output)) System.out.println("Node must be Output");
       n.backwardOp(t);
+      for(Output o : outputs) {
+         if(o != n) {
+            o.backwardOp(Tensor.zero(o.getOutputSize()));
+         }
+      }
+      
+      for(RecurrentGate o : recurrent) {
+         if(o != n) {
+            o.backwardOp(Tensor.zero(o.getOutputSize()));
+         }
+      }
    }
    
 }

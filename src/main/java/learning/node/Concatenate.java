@@ -22,7 +22,6 @@ public class Concatenate extends I2Node {
          CL.clSetKernelArg(kernel, 3, Sizeof.cl_int, Pointer.to(offset));
          
          CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, output.global_size, output.local_size, 0, null, null);
-         
       } else {
          for(int v = 0; v<output.vectorNum(); v++) {
             float[] vecO = output.getVector(v), vecI1 = in.getVector(v), vecI2 = in2.getVector(v);
@@ -36,10 +35,10 @@ public class Concatenate extends I2Node {
       
       if(OPEN_CL) {
          
-         CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
-         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(input.getMem()));
-         CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(input2.getMem()));
-         CL.clSetKernelArg(kernel, 3, Sizeof.cl_int, Pointer.to(offset));
+         CL.clSetKernelArg(kernel2, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
+         CL.clSetKernelArg(kernel2, 1, Sizeof.cl_mem, Pointer.to(input.getMem()));
+         CL.clSetKernelArg(kernel2, 2, Sizeof.cl_mem, Pointer.to(input2.getMem()));
+         CL.clSetKernelArg(kernel2, 3, Sizeof.cl_int, Pointer.to(offset));
          
          CL.clEnqueueNDRangeKernel(queue, kernel2, 1, null, output.global_size, output.local_size, 0, null, null);
          

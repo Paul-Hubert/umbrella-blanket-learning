@@ -21,7 +21,7 @@ public class Main {
          } else if (arg.equals("MNIST")) {
             MNIST.test();
             return;
-         } else if (arg.equals("ShakeLSTM") {
+         } else if (arg.equals("ShakeLSTM")) {
             ShakeLSTM.test();
             return;
          } else if (arg.equals("devices")) {

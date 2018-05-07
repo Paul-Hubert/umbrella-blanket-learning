@@ -28,7 +28,6 @@ public class I2Node extends Node {
    void backwards(Tensor t) {
       dO = t;
       net.operate(this);
-      net.operate(this);
       before.backwards(input);
       before2.backwards(input2);
    }

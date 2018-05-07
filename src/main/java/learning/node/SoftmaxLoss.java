@@ -28,16 +28,16 @@ public class SoftmaxLoss extends I2Node {
    
    public void forwardProp() {
       
-      if(time == softmax.size()) {
+      if(net.getTime() == softmax.size()) {
          softmax.add(Tensor.create(in.getSize()));
-      } if(time == labels.size()) {
+      } if(net.getTime() == labels.size()) {
          labels.add(Tensor.create(in2.getSize()));
       }
       
-      Tensor soft = softmax.get(time), labelB = labels.get(time);
+      Tensor soft = softmax.get(net.getTime()), labelB = labels.get(net.getTime());
       
       if(OPEN_CL) {
-         copy(in2, labels.get(time));
+         copy(in2, labelB);
          
          CL.clSetKernelArg(kernels[0], 0, Sizeof.cl_mem, Pointer.to(in.getMem()));
          CL.clSetKernelArg(kernels[0], 1, Sizeof.cl_mem, Pointer.to(soft.getMem()));
@@ -76,7 +76,6 @@ public class SoftmaxLoss extends I2Node {
          
          //System.out.println(java.util.Arrays.toString(output.unload()));
          
-         //Calculate Crossentropy and insert into output
       
       } else {
          
@@ -127,13 +126,11 @@ public class SoftmaxLoss extends I2Node {
          
       }
       
-      time++;
    }
    
    public void backwardProp() {
-      time--;
       
-      Tensor labelB = labels.get(time), soft = softmax.get(time);
+      Tensor labelB = labels.get(net.getTime()), soft = softmax.get(net.getTime());
       
       if(OPEN_CL) {
          
@@ -206,7 +203,7 @@ public class SoftmaxLoss extends I2Node {
    }
    
    public Tensor read() {
-      return (Tensor) softmax.get(time-1);
+      return (Tensor) softmax.get(net.getTime());
    }
    
 }

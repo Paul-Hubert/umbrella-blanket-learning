@@ -9,7 +9,7 @@ public class O2Node extends Node {
    
    protected Tensor output2, dO2;
    
-   protected boolean calculated = false;
+   protected int last = -1;
    
    public void forwardProp() {
       output = in;
@@ -21,24 +21,23 @@ public class O2Node extends Node {
    }
    
    Tensor forwards() {
-      if(!calculated) {
+      if(net.getOpID() != last) {
          in = before.forwards();
-         calculated = true;
-      }
-      if(net.getLast() == next) {
          net.operate(this);
-         return output;
-      } if(net.getLast() == next2) {
-         net.operate(this);
-         return output2;
+         last = net.getOpID();
       }
-      return null;
+      return output;
    }
    
    void backwards(Tensor t) {
-      dO = t;
-      net.operate(this);
-      before.backwards(input);
+      if(net.getLast() == next) dO = t;
+      if(net.getLast() == next2) dO2 = t;
+      if(dO != null && dO2 != null) {
+         net.operate(this);
+         before.backwards(input);
+         dO = null;
+         dO2 = null;
+      }
    }
    
    protected void attachNext(Node n) {

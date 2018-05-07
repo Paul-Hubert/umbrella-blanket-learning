@@ -18,7 +18,7 @@ public class ComputeContext {
    public static cl_context context;
    public static cl_command_queue queue;
    
-   private static cl_kernel kernel_copy, kernel_add, kernel_radd, kernel_zeros, kernel_ones;
+   private static cl_kernel kernel_copy, kernel_add, kernel_radd, kernel_zeros, kernel_ones, kernel_onehot;
    
    private final static ArrayList kernels = new ArrayList();
    private final static ArrayList programs = new ArrayList();
@@ -72,6 +72,7 @@ public class ComputeContext {
       kernel_radd = getKernel("./kernel/pointadd.c", "pointadd");
       kernel_zeros = getKernel("./kernel/zeros.c", "zeros");
       kernel_ones = getKernel("./kernel/ones.c", "ones");
+      kernel_onehot = getKernel("./kernel/onehot.c", "onehot");
       
       return true;
    }
@@ -128,6 +129,14 @@ public class ComputeContext {
       clSetKernelArg(kernel_ones, 0, Sizeof.cl_mem, Pointer.to(y.getMem()));
       
       clEnqueueNDRangeKernel(queue, kernel_ones, 1, null, y.global_size, y.local_size, 0, null, null);
+   }
+   
+   public static void onehot(Tensor y, int indices, int n) {
+      clSetKernelArg(kernel_onehot, 0, Sizeof.cl_mem, Pointer.to(y.getMem()));
+      clSetKernelArg(kernel_onehot, 1, Sizeof.cl_int, Pointer.to(new int[] {indices}));
+      clSetKernelArg(kernel_onehot, 2, Sizeof.cl_int, Pointer.to(new int[] {n}));
+      
+      clEnqueueNDRangeKernel(queue, kernel_onehot, 1, null, y.global_size, y.local_size, 0, null, null);
    }
    
    public static cl_kernel getKernel(String path, String name) {

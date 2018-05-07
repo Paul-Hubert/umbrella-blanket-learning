@@ -5,7 +5,7 @@ import learning.operation.Operation;
 
 public class RecurrentGate extends Input {
    
-   private int time = 0;
+   private int last = -1;
    
    public RecurrentGate (int[] size) {
       super(size);
@@ -14,12 +14,11 @@ public class RecurrentGate extends Input {
    
    @Override
    public void forwardProp() {
-      time++;
+      
    }
    
    @Override
    public void backwardProp() {
-      time--;
       input = dO;
    }
    
@@ -32,7 +31,8 @@ public class RecurrentGate extends Input {
    @Override
    void backwards(Tensor t) {
       dO = t;
-      if(time > 0) {
+      if(net.getOpID() != last) {
+         last = net.getOpID();
          net.operate(this);
          before.backwards(input);
       }

@@ -57,6 +57,28 @@ public class Tensor {
       }
    }
    
+   public static Tensor zero(int[] size) {
+      Tensor ret;
+      if(OPEN_CL) {
+         ret = new Tensor(size).initCL();
+      } else {
+         if(size.length == 0) {
+            ret = new Tensor1(new int[] {1});
+         } else if(size.length == 1) {
+            ret = new Tensor1(size);
+         } else if(size.length == 2) {
+            ret = new Tensor2(size);
+         } else if(size.length == 3) {
+            ret = new Tensor3(size);
+         } else {
+            System.out.println("incorrect tensor size");
+            return null;
+         }
+      }
+      ret.isZero = true;
+      return ret;
+   }
+   
    public Tensor initCL() {
       data = clCreateBuffer(context, CL_MEM_READ_WRITE, Sizeof.cl_float * bufferSize, null, null);
       ComputeContext.zeros(this);
@@ -66,8 +88,13 @@ public class Tensor {
    
    public void load(float[] val) {
       if(OPEN_CL) {
-         if(val.length != bufferSize) System.out.println("Incorrect argument value length");
-         clEnqueueWriteBuffer(queue, data, CL_TRUE, 0, Sizeof.cl_float * bufferSize, Pointer.to(val), 0, null, null);
+         clEnqueueWriteBuffer(queue, data, CL_FALSE, 0, Sizeof.cl_float * bufferSize, Pointer.to(val), 0, null, null);
+      }
+   }
+   
+   public void load(float[] val, int offset) {
+      if(OPEN_CL) {
+         clEnqueueWriteBuffer(queue, data, CL_FALSE, offset, Sizeof.cl_float * bufferSize, Pointer.to(val), 0, null, null);
       }
    }
    
@@ -144,6 +171,15 @@ public class Tensor {
                vec[i] = (float) (Math.random()*(M-m)+m);
             }
          }
+      }
+      return this;
+   }
+   
+   public Tensor onehot(int indices, int n) {
+      if(OPEN_CL) {
+         ComputeContext.onehot(this, indices, n);
+      } else {
+         System.err.println("Not yet implemented");
       }
       return this;
    }

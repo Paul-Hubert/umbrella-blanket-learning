@@ -16,7 +16,6 @@ public class Node {
    protected int[] outputSize;
    
    protected boolean ready = false;
-   protected int time = 0;
    protected String name;
    
    public Node() {

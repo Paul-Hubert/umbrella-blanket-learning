@@ -20,7 +20,7 @@ public class PointMul extends I2Node {
    
    public void forwardProp() {
       
-      if(time == inputs1.size()) {
+      if(net.getTime() == inputs1.size()) {
          inputs1.add(Tensor.create(input.getSize()));
          inputs2.add(Tensor.create(input2.getSize()));
       }
@@ -32,8 +32,8 @@ public class PointMul extends I2Node {
          
          CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, output.global_size, output.local_size, 0, null, null);
          
-         copy(in, inputs1.get(time));
-         copy(in2, inputs2.get(time));
+         copy(in, inputs1.get(net.getTime()));
+         copy(in2, inputs2.get(net.getTime()));
          
       } else {
          for(int v = 0; v<in.vectorNum(); v++) {
@@ -44,25 +44,19 @@ public class PointMul extends I2Node {
          }
       }
       
-      //output = input * input2
-      //inputs1.set(time, before.data)
-      //inputs2.set(time, before2.data)
-      
-      time++;
    }
    
    public void backwardProp() {
-      time--;
       
       if(OPEN_CL) {
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
-         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(inputs1.get(time).getMem()));
+         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(inputs1.get(net.getTime()).getMem()));
          CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(input.getMem()));
          
          CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, input.global_size, input.local_size, 0, null, null);
          
          CL.clSetKernelArg(kernel, 0, Sizeof.cl_mem, Pointer.to(dO.getMem()));
-         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(inputs2.get(time).getMem()));
+         CL.clSetKernelArg(kernel, 1, Sizeof.cl_mem, Pointer.to(inputs2.get(net.getTime()).getMem()));
          CL.clSetKernelArg(kernel, 2, Sizeof.cl_mem, Pointer.to(input2.getMem()));
          
          CL.clEnqueueNDRangeKernel(queue, kernel, 1, null, input2.global_size, input2.local_size, 0, null, null);

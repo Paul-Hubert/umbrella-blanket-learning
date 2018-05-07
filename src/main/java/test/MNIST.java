@@ -28,8 +28,9 @@ public class MNIST {
    private static float[][] imagesD;
    private static float[] labelsD;
    
-   public static void test() {
-      loadMNIST();
+   public static boolean test() {
+      
+      if(!loadMNIST()) return false;
       
       ComputeContext.PROFILING = true;
       if(ComputeContext.OPEN_CL) {
@@ -166,6 +167,8 @@ public class MNIST {
       if(OPEN_CL) {
          ComputeContext.release();
       }
+      
+      return true;
    }
    
    private static void saveTensor(Tensor t, float label) {
@@ -182,7 +185,7 @@ public class MNIST {
       }
    }
    
-   private static void loadMNIST() {
+   private static boolean loadMNIST() {
       
       File file = new File("./data/train-labels-idx1-ubyte"), file2 = new File("./data/train-images-idx3-ubyte");
       FileInputStream fin = null, fin2 = null;
@@ -200,24 +203,20 @@ public class MNIST {
           
          // Reads up to certain bytes of data from this input stream into an array of bytes.
          fin2.read(imagesBytes);
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
          System.out.println("File not found" + e);
-         return;
-      }
-      catch (IOException ioe) {
+         return false;
+      } catch (IOException ioe) {
          System.out.println("Exception while reading file " + ioe);
-         return;
-      }
-      finally {
+         return false;
+      } finally {
          try {
             if (fin != null) {
                fin.close();
             } if(fin2 != null) {
                fin2.close();
             }
-         }
-         catch (IOException ioe) {
+         } catch (IOException ioe) {
              System.out.println("Error while closing stream: " + ioe);
          }
       }
@@ -259,8 +258,10 @@ public class MNIST {
          }
          
          System.out.println("MNIST Dataset loaded successfully");
+         return true;
       }
       
+      return false;
    }
    
 }
